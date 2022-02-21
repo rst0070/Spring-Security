@@ -3,6 +3,7 @@ package com.example.demo.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,13 +28,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-            .antMatchers("/")
-            .permitAll()
-            .anyRequest()
-            .authenticated()
-            .and()
-            .httpBasic();
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET,"/home").hasAuthority("home:read")
+                .antMatchers(HttpMethod.GET,"/student").hasAuthority("student:read")
+                .anyRequest()
+                .authenticated()
+                .and()
+                .httpBasic();
     }
 
     @Override
@@ -43,10 +45,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
             .username("wonbin")
             .password(passwordEncoder.encode("password"))
             .roles("STUDENT")
+                .authorities("student:read")
             .build();
-        
+
+        UserDetails smith = User.builder()
+                .username("smith")
+                .password(passwordEncoder.encode("password"))
+                .roles("GUEST")
+                .authorities("hone:read")
+                .build();
+
             return new InMemoryUserDetailsManager(
-                wonbin
+                wonbin, smith
             );
     }
 }

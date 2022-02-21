@@ -22,10 +22,7 @@ when get authentication, returns response.
 `/logout` offers logout action.  
 
 ## Basic auth overview
-basic auth ask username and password for every http request.  
-so, every request has username and password at header.  
-  
-if the request has not that header, then server response 401 Unauthorized.  
+Basic Auth는 http요청에 아이디와 패스워드를 함께 보냄으로서 인증을 거치는 방식이다.  
 
 ## Basic auth implementation
 using configuration, override `WebSecurityConfigurerAdapter:configure(HttpSecurity)`.
@@ -124,6 +121,20 @@ role처럼 특정 경로, method에 (ant matcher를 이용하여) permission에 
     .antMatcher(...).hasAuthority("...")
 ```
 또한 이 permission은 user를 생성할때 등록할 수 있다.  
-`authorities(Collection<? extends GrantedAuthority> authorities)`를 이용함.
+`authorities(Collection<? extends GrantedAuthority> authorities)`를 이용함.  
+
+## Antmatcher의 순서도 중요하다.
+모든 요청을 다 허가하고 나서 제한하는 문장을 넣으면 의도한대로 작동하지 않을 것 이다.
+
+## crsf 알아보기
+요청이 진짜 사용자가 보낸요청인지 확인하는 절차인듯한데 정확히는 모르겠다.
+일단 `HttpSecurity.crsf().disable()`로 기능을 꺼놓고 테스트  
+
+## hasAuthority()
+`antMatcher().hasAuthority("퍼미션 이름")`이런식으로 지정하면 퍼미션을 기반으로한 
+인증과정을 거치게 된다. 즉 사용자에게 해당 권한이 부여되었는지 확인한다.  
+  
+또한 사용자에게 권한을 부여하기위해선 `User.builder().authorities("권한1", "권한2")`의 
+형식으로 할 수 있다.
 
 

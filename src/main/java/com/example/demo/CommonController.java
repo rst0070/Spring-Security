@@ -8,8 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class CommonController {
     
-    @GetMapping
+    @GetMapping("home")
     public String homePage(){
         return "home";
+    }
+
+    @GetMapping("student")
+    public String studentPage(){
+        return "student";
     }
 }
