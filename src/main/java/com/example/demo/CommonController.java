@@ -17,4 +17,9 @@ public class CommonController {
     public String studentPage(){
         return "student";
     }
+
+    @GetMapping("login")
+    public String loginPage(){
+        return "login";
+    }
 }

@@ -137,4 +137,10 @@ role처럼 특정 경로, method에 (ant matcher를 이용하여) permission에 
 또한 사용자에게 권한을 부여하기위해선 `User.builder().authorities("권한1", "권한2")`의 
 형식으로 할 수 있다.
 
+`GrantedAuthority`객체를 이용하기도 하는데 이 필요성에 대해서 찾아보자.
 
+## PreAuthorize
+`@PreAuthorize()`를 통해서 컨트롤러의 매핑된 메서드에서 직접 접근권한을 설정할 수 있다.  
+ex) `@PreAuthorize("hasAuthority('student:read')")`이 외에도 다양한 형태의 메소드로 사용가능.  
+하지만 이때 security config class에
+`@EnableGlobalMethodSecurity(prePostEnabled = true)`를 해줘야함.

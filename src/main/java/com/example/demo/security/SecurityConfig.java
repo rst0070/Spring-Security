@@ -12,6 +12,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.core.userdetails.*;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 
 @Configuration
@@ -28,6 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                //.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                //.and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/home").hasAuthority("home:read")
@@ -35,7 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic();
+                //.httpBasic();
+                .formLogin()
+                .loginPage("/login");
     }
 
     @Override
