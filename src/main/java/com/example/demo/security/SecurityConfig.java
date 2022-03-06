@@ -14,6 +14,8 @@ import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+import java.util.concurrent.TimeUnit;
+
 
 @Configuration
 @EnableWebSecurity
@@ -33,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 //.and()
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/login").permitAll()
                 .antMatchers(HttpMethod.GET,"/home").hasAuthority("home:read")
                 .antMatchers(HttpMethod.GET,"/student").hasAuthority("student:read")
                 .anyRequest()
@@ -40,7 +43,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                 //.httpBasic();
                 .formLogin()
-                .loginPage("/login");
+                .loginPage("/login")
+                .defaultSuccessUrl("/home")
+                .and()
+                    .rememberMe()
+                        .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))
+                        .key("this is key for md5")
+                .and()
+                    .logout()
+                        .logoutUrl("/logout")
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
+                        .deleteCookies()
+                        .logoutSuccessUrl("/login");
+
     }
 
     @Override
@@ -50,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
             .username("wonbin")
             .password(passwordEncoder.encode("password"))
             .roles("STUDENT")
-                .authorities("student:read")
+                .authorities("student:read", "home:read")
             .build();
 
         UserDetails smith = User.builder()
